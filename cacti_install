@@ -1,0 +1,77 @@
+How to configure and install cacti on Ubuntu/linux
+Prerequisites
+• A server running Ubuntu 
+
+• A root Privilege password is required to configure the cacti server.
+
+
+Getting Started
+
+
+Before starting, it is a good idea to update all system packages to the latest version. You can update them with the following command:
+
+apt-get update -y
+
+
+Once all the packages are updated, install other required dependencies by running the following command:
+apt-get install snmp php-snmp rrdtool librrds-perl unzip curl git gnupg2 -y
+Once all the dependencies are installed, you can proceed to the next step.
+Install LAMP Server
+
+Next, you will need to install the Apache web server, MariaDB, PHP and other required PHP extensions to your server. You can install all of them by running the following command:
+
+apt-get install apache2 mariadb-server php php-mysql libapache2-mod-php php-xml php-ldap php-mbstring php-gd php-gmp -y
+
+
+After installing all the packages, edit the php.ini file and make some changes:
+
+nano /etc/php/7.4/apache2/php.ini
+
+
+Change the following lines: and time zong according your country timezone date and time
+
+
+memory_limit = 512M
+max_execution_time = 60
+
+date.timezone = Asia/Kolkata
+
+
+Save and close the file then edit another php.ini file and make some changes:
+nano /etc/php/7.4/cli/php.ini
+Change the following lines:
+memory_limit = 512M
+max_execution_time = 60
+
+date.timezone = Asia/Kolkata
+
+
+Save and close the file when you are finished. Then, restart the Apache service to apply the changes:
+
+
+systemctl restart apache2
+Once you are finished, you can proceed to the next step.
+
+Configure MariaDB Server
+
+
+Cacti uses MariaDB as a database backend. So you will need to create a database and user for Cacti.
+First, edit the MariaDB default configuration file and tweak some settings:
+nano /etc/mysql/mariadb.conf.d/50-server.cnf
+Add / Modify the following lines inside [mysqld] section:
+collation-server = utf8mb4_unicode_ci
+max_heap_table_size = 128M
+tmp_table_size = 64M
+join_buffer_size = 128M
+innodb_file_format = Barracuda
+innodb_large_prefix = 1
+innodb_buffer_pool_size = 1028M
+innodb_flush_log_at_timeout = 3
+innodb_read_io_threads = 32
+innodb_write_io_threads = 16
+innodb_io_capacity = 5000
+innodb_io_capacity_max = 10000
+innodb_buffer_pool_instances=11
+
+Save and close the file then restart the MariaDB service to apply the changes:
+systemctl restart mariadb
